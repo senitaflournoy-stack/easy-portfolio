@@ -1,14 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const [isDark, setIsDark] = useState(false);
 
+  useEffect(() => {
+    // 检测系统主题偏好或已保存的主题
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+      setIsDark(true);
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
+
   const toggleTheme = () => {
     setIsDark(!isDark);
+    const newTheme = !isDark ? "dark" : "light";
     document.documentElement.classList.toggle("dark");
+    localStorage.setItem("theme", newTheme);
   };
 
   const navItems = [
