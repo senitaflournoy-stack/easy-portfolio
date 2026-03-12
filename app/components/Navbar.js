@@ -7,31 +7,23 @@ export default function Navbar() {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    // 检测系统主题偏好或已保存的主题
-    const savedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-    const shouldBeDark = savedTheme === "dark" || (!savedTheme && prefersDark);
-    setIsDark(shouldBeDark);
-    if (shouldBeDark) {
-      document.documentElement.classList.add("dark");
-    }
+    // 检测当前是否有 dark 类
+    const hasDarkClass = document.documentElement.classList.contains("dark");
+    setIsDark(hasDarkClass);
   }, []);
 
   const toggleTheme = () => {
-    setIsDark((prev) => {
-      const newIsDark = !prev;
-      const newTheme = newIsDark ? "dark" : "light";
+    const html = document.documentElement;
+    const willBeDark = !isDark;
 
-      if (newIsDark) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+    if (willBeDark) {
+      html.classList.add("dark");
+    } else {
+      html.classList.remove("dark");
+    }
 
-      localStorage.setItem("theme", newTheme);
-      return newIsDark;
-    });
+    setIsDark(willBeDark);
+    localStorage.setItem("theme", willBeDark ? "dark" : "light");
   };
 
   const navItems = [
@@ -63,10 +55,11 @@ export default function Navbar() {
 
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+            className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors text-2xl"
             aria-label="切换主题"
+            title={isDark ? "切换到浅色模式" : "切换到深色模式"}
           >
-            {isDark ? "🌙" : "☀️"}
+            {isDark ? "☀️" : "🌙"}
           </button>
         </div>
       </div>
