@@ -11,17 +11,27 @@ export default function Navbar() {
     const savedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
-      setIsDark(true);
+    const shouldBeDark = savedTheme === "dark" || (!savedTheme && prefersDark);
+    setIsDark(shouldBeDark);
+    if (shouldBeDark) {
       document.documentElement.classList.add("dark");
     }
   }, []);
 
   const toggleTheme = () => {
-    setIsDark(!isDark);
-    const newTheme = !isDark ? "dark" : "light";
-    document.documentElement.classList.toggle("dark");
-    localStorage.setItem("theme", newTheme);
+    setIsDark((prev) => {
+      const newIsDark = !prev;
+      const newTheme = newIsDark ? "dark" : "light";
+
+      if (newIsDark) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+
+      localStorage.setItem("theme", newTheme);
+      return newIsDark;
+    });
   };
 
   const navItems = [
